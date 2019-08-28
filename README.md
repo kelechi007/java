@@ -1,3 +1,3 @@
 # kosytedy.github.io
 
-A classic Tetris game just for fun ;)
+A classic JS based Tetris game just for fun ;)
