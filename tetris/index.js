@@ -3,8 +3,8 @@ const ctx = cvs.getContext("2d");
 const scoreElement = document.getElementById("score");
 
 const ROW = 20;
-const COL = COLUMN = 10;
-const SQ = squareSize = 20;
+const COL = 10;
+const SQ = 20;
 const VACANT = "WHITE"; // color of an empty square
 
 // draw a square
@@ -268,7 +268,7 @@ let gameOver = false;
 function drop(){
     let now = Date.now();
     let delta = now - dropStart;
-    if(delta > 1000){
+    if(delta > 500){
         p.moveDown();
         dropStart = Date.now();
     }
