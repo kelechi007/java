@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Snake Game</title>
+    <script src="https://kit.fontawesome.com/6bfd48cd04.js"></script>
+    <style>
+        #score{
+            display: inline-block;
+        }
+        div{
+            font-size: 25px;
+            font-weight: bold;
+            font-family: monospace;
+            text-align: center;
+        }
+        canvas{
+            display: block;
+            margin:0 auto;
+        }
+        .controllers{
+            margin: auto;
+        }
+        .btn{
+            padding: 5px;
+            border: 1px solid black;
+            background-color: darkseagreen;
+            cursor: pointer;
+            margin: 20px;
+        }
+        #moveLeft, #moveRight{
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        Score : <div id="score">0</div>
+    </div>
+
+    <canvas id="tetris" width="200" height="400"></canvas>
+    
+
+    <div class="controllers">
+        <div style="margin-top: 10px;">
+            <span class="btn"><i id="rotate" class="fas fa-redo"></i></span>
+        </div>
+        <div style="margin-top: 20px;">
+            <span class="btn"><i id="moveLeft" class="fas fa-chevron-left"></i></span>
+            <span class="btn"><i id="moveRight" class="fas fa-chevron-right"></i></span>
+        </div>
+        <div style="margin-top: 20px;">
+            <span class="btn"><i id="moveDown" class="fas fa-chevron-down"></i></span>
+        </div>
+        
+    </div>
+    
+    
+    <script src="tetrises.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
