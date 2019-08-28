@@ -40,13 +40,13 @@ drawBoard();
 // the pieces and their colors
 
 const PIECES = [
-    [Z,"red"],
-    [S,"green"],
-    [T,"yellow"],
-    [O,"blue"],
+    [Z,"blue"],
+    [S,"red"],
+    [T,"orange"],
+    [O,"yellow"],
     [L,"purple"],
-    [I,"cyan"],
-    [J,"orange"]
+    [I,"violet"],
+    [J,"green"]
 ];
 
 // generate random pieces
@@ -165,7 +165,7 @@ Piece.prototype.lock = function(){
             }
             // pieces to lock on top = game over
             if(this.y + r < 0){
-                alert("Game Over");
+                alert("Game Over! Refresh the page to start afresh.");
                 // stop request animation frame
                 gameOver = true;
                 break;
