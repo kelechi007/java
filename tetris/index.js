@@ -239,7 +239,7 @@ document.addEventListener("click",ctrl);
 
 function ctrl(event){
     let id = event.target.id;
-    console.log(id);
+    
     switch (id) {
         case 'rotate':
             p.rotate();
