@@ -65,7 +65,7 @@
                 htmlText = htmlText.replace(/^\s+|\s+$/g, '').trim();
 
                 var htmlTag = getHTMLTag(htmlText);
-                var htmlAttributes = getMTMLAttributes(htmlText);
+                var htmlAttributes = getHTMLAttributes(htmlText);
                 var isLinkBtn = false;
                 switch (htmlTag) {
                     case "a": aspTextBuilder.push("HyperLink "); break;
@@ -142,7 +142,7 @@
                 return html.substring(html.indexOf("<") + 1, html.indexOf(" "));
             }
 
-            function getMTMLAttributes(html) {
+            function getHTMLAttributes(html) {
                 html.trim();
                 var combinedAttrs = html.substring(html.indexOf(" "), html.indexOf(">")).trim();
 
