@@ -103,7 +103,7 @@
                         if (unwantedAttrs.includes(htmlAttributes[attribute])) continue;
 
                         var key = attribute;
-                        var value = htmlAttributes[attribute];
+                        var value = htmlAttributes[attribute].trim();
                         if (attribute == 'id') key = "ID";
                         if (attribute == 'class') key = "CssClass";
                         if (attribute == 'value') key = "Text";
@@ -125,6 +125,7 @@
 
                 if (htmlText.lastIndexOf("<") > 0) {
                     var textValue = htmlText.substring(htmlText.indexOf(">") + 1, htmlText.lastIndexOf("<"));
+                    textValue = textValue.replace(/(\r\n|\n|\r)/gm, '').trim();
                     if (!isValidHtml(textValue)) {
                         aspTextBuilder.push(`Text="${textValue}" `);
                     }
