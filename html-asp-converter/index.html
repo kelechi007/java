@@ -66,6 +66,7 @@
 
                 var htmlTag = getHTMLTag(htmlText);
                 var htmlAttributes = getMTMLAttributes(htmlText);
+                var isLinkBtn = false;
                 switch (htmlTag) {
                     case "a": aspTextBuilder.push("HyperLink "); break;
                     case "label": aspTextBuilder.push("Label "); break;
@@ -78,6 +79,9 @@
                                 aspTextBuilder.push("CheckBox ");
                             } else if (htmlAttributes["type"] == "radio") {
                                 aspTextBuilder.push("RadioButton GroupName=\"\" ");
+                            } else if (htmlAttributes["type"] == "image") {
+                                aspTextBuilder.push("LinkButton ");
+                                isLinkBtn = true;
                             } else {
                                 aspTextBuilder.push("TextBox TextMode=\"SingleLine\" ");
                             }
@@ -108,6 +112,10 @@
                         if (attribute == 'cols') key = "Columns";
                         if (attribute == 'href') key = "NavigateURL";
                         if (attribute == 'placeholder') key = "PlaceHolder";
+                        if (attribute == 'src' && isLinkBtn){
+                            key = "Text";
+                            value = `<img src='${value}' />`;
+                        }
 
                         allAttrs.push(`${key}="${value}" `);
                         var allAttributesJoined = allAttrs.join("");
