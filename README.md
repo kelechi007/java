@@ -1,3 +1,3 @@
 # kosytedy.github.io
 
-A friendly Tetris game built with HTML, CSS and Javascript.
+This is where I store my little personal projects written with javascript and that can be viewed on a browser.

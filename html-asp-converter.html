@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to ASP Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <header class="py-3 mb-3 border-bottom">
+        <div class="container-fluid d-grid gap-3 align-items-center">
+            <a href="#" class="d-flex align-items-center link-dark text-decoration-none">
+                HTML to ASP.NET Converter
+            </a>
+        </div>
+    </header>
+    <asp:Label ID="Label1" CssClass="cc-label" Text="Label" runat="server" />
+    <div class="container-fluid">
+        <div class="d-grid gap-3" style="grid-template-columns: 1fr 1fr;">
+            <div>HTML</div>
+            <div>ASP.NET</div>
+        </div>
+    </div>
+    <div class="container-fluid pb-3">
+        <div class="d-grid gap-3" style="grid-template-columns: 1fr 1fr;">
+            <textarea id="convertFrom" rows="10"></textarea>
+            <div id="convertTo"
+                style="border:1px solid black; background-color: bisque; font-size: 12px; position: relative;"></div>
+            <button id="copyText" style="position: absolute;right: .75rem;"
+                onclick="copyTextToClipboard()">Copy</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <script>
+        "use strict";
+
+        let ASP_BEGIN = "<asp:";
+        let ASP_END = "runat=\"server\"/>";
+
+        $(document).ready(function () {
+            $("#convertFrom").keyup(function () {
+                $("#convertTo").text("");
+                var convertFromText = $("#convertFrom").val();
+                if (!isValidHtml(convertFromText)) return;
+
+                var convertedText = convertHtmlToAsp(convertFromText);
+                $("#convertTo").text(convertedText);
+            });
+
+            function convertHtmlToAsp(htmlText) {
+                var aspTextBuilder = [];
+                aspTextBuilder.push(ASP_BEGIN);
+
+                htmlText = htmlText.replace(/^\s+|\s+$/g, '').trim();
+
+                var htmlTag = getHTMLTag(htmlText);
+                var htmlAttributes = getMTMLAttributes(htmlText);
+                switch (htmlTag) {
+                    case "a": aspTextBuilder.push("HyperLink "); break;
+                    case "label": aspTextBuilder.push("Label "); break;
+                    case "button": aspTextBuilder.push("Button "); break;
+                    case "textarea": aspTextBuilder.push("TextBox TextMode=\"MultiLine\" "); break;
+                    case "select": aspTextBuilder.push("DropDownList AppendDataBoundItems=\"true\" "); break;
+                    case "input":
+                        if (Object.prototype.hasOwnProperty.call(htmlAttributes, 'type')) {
+                            if (htmlAttributes["type"] == "checkbox") {
+                                aspTextBuilder.push("CheckBox ");
+                            } else if (htmlAttributes["type"] == "radio") {
+                                aspTextBuilder.push("RadioButton GroupName=\"\" ");
+                            } else {
+                                aspTextBuilder.push("TextBox TextMode=\"SingleLine\" ");
+                            }
+                            delete htmlAttributes["type"];
+                        } else {
+                            aspTextBuilder.push("TextBox TextMode=\"SingleLine\" ");
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+
+                var unwantedAttrs = unwantedAttributes();
+
+                for (var attribute in htmlAttributes) {
+                    var allAttrs = [];
+                    if (Object.hasOwnProperty.call(htmlAttributes, attribute)) {
+
+                        if (unwantedAttrs.includes(htmlAttributes[attribute])) continue;
+
+                        var key = attribute;
+                        var value = htmlAttributes[attribute];
+                        if (attribute == 'id') key = "ID";
+                        if (attribute == 'class') key = "CssClass";
+                        if (attribute == 'value') key = "Text";
+                        if (attribute == 'onclick') key = "OnClick";
+                        if (attribute == 'rows') key = "Rows";
+                        if (attribute == 'cols') key = "Columns";
+                        if (attribute == 'href') key = "NavigateURL";
+
+                        allAttrs.push(`${key}="${value}" `);
+                        var allAttributesJoined = allAttrs.join("");
+                        aspTextBuilder.push(allAttributesJoined);
+                    }
+                }
+
+                if (htmlText.lastIndexOf("<") > 0) {
+                    var textValue = htmlText.substring(htmlText.indexOf(">") + 1, htmlText.lastIndexOf("<"));
+                    if (!isValidHtml(textValue)) {
+                        aspTextBuilder.push(`Text="${textValue}" `);
+                    }
+                }
+
+
+                aspTextBuilder.push(ASP_END);
+                return aspTextBuilder.join("");
+            }
+
+            function getHTMLTag(html) {
+                html.trim();
+                if (!hasWhiteSpace(html.substring(0, html.indexOf(">")))) return html.substring(html.indexOf("<") + 1, html.indexOf(">"));
+                return html.substring(html.indexOf("<") + 1, html.indexOf(" "));
+            }
+
+            function getMTMLAttributes(html) {
+                html.trim();
+                var combinedAttrs = html.substring(html.indexOf(" "), html.indexOf(">")).trim();
+
+                if (!hasWhiteSpace(html.substring(0, html.indexOf(">"))) || (combinedAttrs.length <= 0)) return new Object();
+                if (combinedAttrs.length <= 0) return new Object();
+
+                var allAttrs = [];
+                while (combinedAttrs.length > 0) {
+
+                    if (nthIndexOf(combinedAttrs, '"', 2) < 0) break;
+                    var attr = combinedAttrs.substring(0, nthIndexOf(combinedAttrs, '"', 2) + 1);
+                    combinedAttrs = combinedAttrs.slice(nthIndexOf(combinedAttrs, '"', 2) + 1);
+                    allAttrs.push(attr.trim());
+                }
+
+                var attributes = new Object();
+
+                allAttrs.forEach(attribute => {
+                    if (attribute.indexOf("=") < 0) return;
+                    var key = attribute.substring(0, attribute.indexOf("="));
+                    var value = attribute.substring(attribute.indexOf("\"") + 1, attribute.lastIndexOf("\""));
+                    attributes[key] = value;
+                });
+                return attributes;
+            }
+
+            function unwantedAttributes() { return ["name"]; }
+
+            function isValidHtml(html) { return /<\/?[a-z][\s\S]*>/i.test(html); }
+
+            function hasWhiteSpace(string) { return /\s/g.test(string); }
+
+            function nthIndexOf(str, char, n) {
+                var L = str.length, i = -1;
+                while (n-- && i++ < L) {
+                    i = str.indexOf(char, i);
+                    if (i < 0) break;
+                }
+                return i;
+            }
+
+
+        });
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                $("#copyText").text("Copied!");
+                setTimeout(function () { $("#copyText").text("Copy"); }, 1000);
+            } catch (err) {
+                console.error('Error copying text.', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        function copyTextToClipboard() {
+            var text = $("#convertTo").text();
+            if (!navigator.clipboard) {
+                fallbackCopyTextToClipboard(text);
+                return;
+            }
+            navigator.clipboard.writeText(text).then(function () {
+                $("#copyText").text("Copied!");
+                setTimeout(function () { $("#copyText").text("Copy"); }, 1000);
+            }, function (err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+
+</html>
