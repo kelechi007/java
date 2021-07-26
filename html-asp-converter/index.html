@@ -85,7 +85,8 @@
                                 isLinkBtn = true;
                             }  else if (htmlAttributes["type"] == "submit") {
                                 aspTextBuilder.push("Button ");
-                                isLinkBtn = true;
+                            }  else if (htmlAttributes["type"] == "button") {
+                                aspTextBuilder.push("Button ");
                             } else {
                                 aspTextBuilder.push("TextBox TextMode=\"SingleLine\" ");
                             }
