@@ -52,7 +52,7 @@
             $("#convertFrom").keyup(function () {
                 $("#convertTo").text("");
                 var convertFromText = $("#convertFrom").val();
-                convertFromText = convertFromText.replace("'", "\"");
+                convertFromText = convertFromText.replaceAll("'", "\"");
                 if (!isValidHtml(convertFromText)) return;
 
                 var convertedText = convertHtmlToAsp(convertFromText);
