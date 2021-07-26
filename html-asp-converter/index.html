@@ -82,6 +82,9 @@
                             } else if (htmlAttributes["type"] == "image") {
                                 aspTextBuilder.push("LinkButton ");
                                 isLinkBtn = true;
+                            }  else if (htmlAttributes["type"] == "submit") {
+                                aspTextBuilder.push("Button ");
+                                isLinkBtn = true;
                             } else {
                                 aspTextBuilder.push("TextBox TextMode=\"SingleLine\" ");
                             }
